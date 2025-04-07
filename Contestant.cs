@@ -8,6 +8,8 @@ namespace HungerGamesSimulator
 
         public int District { get; set; }
         public int Health { get; set; } = 20;
+        public int Hunger { get; set; } = 10;
+        public int Thirst { get; set; } = 10;
         public int WeaponBuff { get; set; } = 0;
         public int DiceRoll { get; set; }
         public int LocationId { get; set; } = 0;

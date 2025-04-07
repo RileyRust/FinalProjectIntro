@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\FinalProjectIntro.csproj": {}
+    "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\obj\\FinalProjectIntro.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\FinalProjectIntro.csproj": {
+    "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\obj\\FinalProjectIntro.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\FinalProjectIntro.csproj",
+        "projectUniqueName": "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\obj\\FinalProjectIntro.csproj",
         "projectName": "FinalProjectIntro",
-        "projectPath": "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\FinalProjectIntro.csproj",
+        "projectPath": "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\obj\\FinalProjectIntro.csproj",
         "packagesPath": "C:\\Users\\Riley.Rust\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\obj\\",
+        "outputPath": "C:\\Users\\Riley.Rust\\finalintro\\FinalProjectIntro\\obj\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

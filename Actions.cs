@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace HungerGamesSimulator
 {
@@ -8,15 +9,38 @@ namespace HungerGamesSimulator
     {
         private static Random rng = new Random();
 
-        private static readonly string[] CommonLoot = { "Bread", "Canteen", "Bandages" };
-        private static readonly string[] RareLoot = { "Knife", "Spear", "Medkit", "Bow" };
+        private static readonly string[] CommonLoot = { "Bread", "Canteen", "Bandages","Rock","Apple","Ripped Shirt","Club","Slingshot","Caprisun","Knife" };
+        private static readonly string[] RareLoot = { "Spear", "Medkit", "Bow","Sword","Trident","Jerky","Chocolate Milk" };
         private static readonly string[] AllianceNames = { "Wolf Pack", "Stealth Squad", "Fire Alliance", "Nightwatchers" };
 
         private static readonly Dictionary<string, int> WeaponBuffs = new Dictionary<string, int>
         {
+            { "Rock", 1 },
+            { "Club", 2 },
+            { "Slingshot", 3 },
             { "Knife", 3 },
-            { "Spear", 7 },
-            { "Bow", 5 }
+            { "Spear", 4 },
+            { "Bow", 5 },
+            { "Sword", 6 },
+            { "Trident", 7 }
+        };
+         private static readonly Dictionary<string, int> HealthBuffs = new Dictionary<string, int>
+        {
+             { "Ripped Shirt", 1 },
+             { "Bandage", 5 },
+            { "Medkit", 10 }
+        };
+           private static readonly Dictionary<string, int> FoodBuffs = new Dictionary<string, int>
+        {
+            {"Apple", 1 },
+            {"Bread", 3 },
+            {"Jerky", 5 }
+        };
+        private static readonly Dictionary<string, int> ThirstBuffs = new Dictionary<string, int>
+        {
+            {"Caprisun", 1},
+            {"Canteen", 3},
+            {"Chocolate Milk", 5}
         };
 
         private static int TotalZones = 10;
@@ -29,19 +53,20 @@ namespace HungerGamesSimulator
             AssignLoot(contestants);
             HandleRunaways(contestants);
 
-            Console.WriteLine("\n🎒 Loot Summary:");
+            Console.WriteLine("\n Loot Summary:");
             contestants.Where(c => c.Loot != "None").ToList().ForEach(c =>
             {
-                if (new[] { "Knife", "Spear", "Bow" }.Contains(c.Loot))
+                if (new[] { "Knife", "Spear", "Bow","Trident", "Sword","Rock","Club", "Slingshot" }.Contains(c.Loot))
                     Console.WriteLine($"{c.FullName} (District {c.District}) - Loot: {c.Loot}, Weapon Buff: {c.WeaponBuff}");
                 else
                     Console.WriteLine($"{c.FullName} (District {c.District}) - Loot: {c.Loot}");
             });
 
-            Console.WriteLine("\n🌪️ Cornucopia Battle Begins!");
+            Console.WriteLine("\n Cornucopia Battle Begins!");
             RunCombatLoop(contestants, 0);
 
-            Console.WriteLine("\n🌒 Night falls over the arena...");
+
+            Console.WriteLine("\n Night falls over the arena...");
             ShowFallenTributes(contestants);
 
             Console.WriteLine("\nPress any key to continue to the next day...");
@@ -49,20 +74,17 @@ namespace HungerGamesSimulator
 
             while (contestants.Count(c => c.Health > 0) > 1)
             {
-                Console.WriteLine("\n🌞 A new day dawns...");
+                Console.WriteLine("\n A new day dawns...");
 
                 var aliveBefore = contestants.Where(c => c.Health > 0).Select(c => c.FullName).ToHashSet();
                 
                 AdjustArenaSize(contestants);
 
-                // Run combat or simulate actions for all tributes
                 RunZoneTurns(contestants);
 
-                // If enough tributes are alive, proceed with movements and alliance breakups
-                Console.WriteLine("\n🌍 Tributes move through the arena...");
+                Console.WriteLine("\n Tributes move through the arena...");
                 MoveTributes(contestants);
 
-                // Breakup logic if 6 or fewer tributes remain
                 int aliveCount = contestants.Count(c => c.Health > 0);
                 if (aliveCount <= 6)
                 {
@@ -84,7 +106,7 @@ namespace HungerGamesSimulator
                 }
                 if (contestants.Count(c => c.Health > 0) == 2)
                 {
-                    Console.WriteLine("\n🔥 Final Battle Begins between the last two tributes!");
+                    Console.WriteLine("\n Final Battle Begins between the last two tributes!");
 
                     // Get the two remaining tributes
                     var finalTwo = contestants.Where(c => c.Health > 0).ToList();
@@ -97,7 +119,7 @@ namespace HungerGamesSimulator
                 }
 
                 // Check and run combat for any remaining tributes in each zone
-                Console.WriteLine("\n🌒 Night falls...");
+                Console.WriteLine("\n Night falls...");
 
                 var newDeaths = contestants
                     .Where(c => c.Health <= 0 && aliveBefore.Contains(c.FullName))
@@ -109,12 +131,14 @@ namespace HungerGamesSimulator
                 }
                 else
                 {
-                    Console.WriteLine("\n🕯️ Fallen Tributes:");
+                    Console.WriteLine("\n Fallen Tributes:");
                     foreach (var tribute in newDeaths)
                     {
                         Console.WriteLine($"- {tribute.FullName} (District {tribute.District})");
                     }
                 }
+
+                 ThirstandHunger(contestants); 
 
                 // Add a keypress to continue after a night phase
                 Console.WriteLine("\nPress any key to continue...");
@@ -128,14 +152,14 @@ namespace HungerGamesSimulator
             var winner = contestants.FirstOrDefault(c => c.Health > 0);
             if (winner != null)
             {
-                Console.WriteLine($"\n🏆 {winner.FullName} (District {winner.District}) is the victor of the Hunger Games!");
+                Console.WriteLine($"\n {winner.FullName} (District {winner.District}) is the victor of the Hunger Games!");
             }
         }
 
 
         private static void FormAlliances(List<Contestant> contestants)
         {
-            Console.WriteLine("\n🤝 Forming alliances...");
+            Console.WriteLine("\n Forming alliances...");
 
             int numberOfAlliances = rng.Next(2, 5);
             List<string> activeAlliances = new List<string>();
@@ -171,9 +195,12 @@ namespace HungerGamesSimulator
             }
         }
 
+
+        
+
         private static void AssignLoot(List<Contestant> contestants)
         {
-            Console.WriteLine("\n🧺 Loot scramble...");
+            Console.WriteLine("\n Loot scramble...");
             foreach (var contestant in contestants)
             {
                 contestant.DiceRoll = RollDice(1, 20);
@@ -202,8 +229,20 @@ namespace HungerGamesSimulator
 
                 if (WeaponBuffs.ContainsKey(contestant.Loot))
                     contestant.WeaponBuff += WeaponBuffs[contestant.Loot];
+                if (HealthBuffs.ContainsKey(contestant.Loot))
+                    contestant.Health += HealthBuffs[contestant.Loot];
+                if (FoodBuffs.ContainsKey(contestant.Loot))
+                    contestant.Hunger += FoodBuffs[contestant.Loot];
+                if (ThirstBuffs.ContainsKey(contestant.Loot))
+                    contestant.Thirst += ThirstBuffs[contestant.Loot];
             }
         }
+
+
+
+
+
+
 
         private static void HandleRunaways(List<Contestant> contestants)
         {
@@ -214,12 +253,45 @@ namespace HungerGamesSimulator
                 contestant.RanAway = false;
             }
         }
+       
+       private static void ThirstandHunger(List<Contestant> contestants)
+        {
+            foreach (var contestant in contestants)
+            {
+                int DailyThirst = 10; 
+                int DailyHunger = 10; 
+                int dyingfromstuff = 20; 
+
+                contestant.Thirst = contestant.Thirst - DailyThirst; 
+                contestant.Hunger = contestant.Hunger - DailyHunger; 
+                if( contestant.Hunger == 0 || contestant.Thirst == 0 )
+                {
+                    contestant.Health = contestant.Health - dyingfromstuff; 
+                }
+                if(contestant.Thirst <= 0 && contestant.Health <= 0) 
+                {
+                    Console.WriteLine($"{contestant.FullName} Has Died of Thirst"); 
+
+                }
+                if(contestant.Hunger <= 0 && contestant.Health <= 0) 
+                {
+                    Console.WriteLine($"{contestant.FullName} Has Died of Hunger"); 
+
+                }
+            }
+        }
+
+
+
+
+
+
 
         private static void RunCombatLoop(List<Contestant> contestants, int zone)
         {
             while (contestants.Count(c => c.LocationId == zone && c.Health > 0) > 1)
             {
-                var fighters = contestants.Where(c => c.LocationId == zone && c.Health > 0).OrderBy(_ => rng.Next()).ToList();
+                var fighters = contestants.Where(c => c.LocationId == zone && c.Health > 0).OrderBy(_ => rng.Next()).ToList(); // shuffles all the fighters in that zone to randomize the fights
 
                 var attacker = fighters[0];
                 var defender = fighters[1];
@@ -235,7 +307,7 @@ namespace HungerGamesSimulator
 
                 if (loser.Health <= 0)
                 {
-                    Console.WriteLine($"💀 {loser.FullName} has died in zone {zone}.");
+                    Console.WriteLine($" {attacker.FullName} has killed {loser.FullName}.");
                 }
                 else
                 {
@@ -243,6 +315,11 @@ namespace HungerGamesSimulator
                 }
             }
         }
+
+
+
+
+
 
         private static void RunZoneTurns(List<Contestant> contestants)
         {
@@ -258,7 +335,7 @@ namespace HungerGamesSimulator
 
                 if (a.Alliance != b.Alliance)
                 {
-                    Console.WriteLine($"\n🗡️ Fight in zone {zone}!");
+                    Console.WriteLine($"\n Fight in zone {zone}!");
                     RunCombatLoop(zoneTributes, zone);
                 }
                 else if (a.Alliance == "None")
@@ -266,10 +343,15 @@ namespace HungerGamesSimulator
                     string newAlliance = "ZoneAllies" + zone;
                     a.Alliance = newAlliance;
                     b.Alliance = newAlliance;
-                    Console.WriteLine($"🫱🏼‍🫲🏼 {a.FullName} and {b.FullName} formed a new alliance in zone {zone}!");
+                    Console.WriteLine($" {a.FullName} and {b.FullName} formed a new alliance in zone {zone}!");
                 }
             }
         }
+
+
+
+
+
 
 
         private static void ShowFallenTributes(List<Contestant> contestants)
@@ -281,12 +363,18 @@ namespace HungerGamesSimulator
                 return;
             }
 
-            Console.WriteLine("\n🕯️ Fallen Tributes:");
+            Console.WriteLine("\n Fallen Tributes:");
             foreach (var tribute in fallen)
             {
                 Console.WriteLine($"- {tribute.FullName} (District {tribute.District})");
             }
         }
+
+
+
+
+
+
 
         private static void CheckRunAway(Contestant c)
         {
@@ -309,10 +397,17 @@ namespace HungerGamesSimulator
             }
         }
 
+
+
+
         public static int RollDice(int min, int max)
         {
             return rng.Next(min, max + 1);
         }
+
+
+
+
         private static void MoveTributes(List<Contestant> contestants)
         {
             foreach (var c in contestants.Where(c => c.Health > 0))
@@ -326,9 +421,14 @@ namespace HungerGamesSimulator
                 c.LocationId = newZone;
             }
         }
+
+
+
+
+
         private static void RunFinalCombat(Contestant tribute1, Contestant tribute2)
         {
-            Console.WriteLine($"\n💥 {tribute1.FullName} vs. {tribute2.FullName}");
+            Console.WriteLine($"\n {tribute1.FullName} vs. {tribute2.FullName}");
 
             // Each tribute rolls for attack
             int roll1 = RollDice(1, 20) + tribute1.WeaponBuff;
@@ -344,13 +444,20 @@ namespace HungerGamesSimulator
 
             if (loser.Health <= 0)
             {
-                Console.WriteLine($"💀 {loser.FullName} has fallen! {tribute1.FullName} wins the final battle!");
+                Console.WriteLine($" {loser.FullName} has fallen! {tribute1.FullName} wins the final battle!");
             }
             else
             {
-                Console.WriteLine($"⚔️ {tribute2.FullName} survives with {tribute2.Health} health left.");
+                Console.WriteLine($" {tribute2.FullName} survives with {tribute2.Health} health left.");
             }
         }
+
+
+
+
+
+
+
         private static void AdjustArenaSize(List<Contestant> contestants)
         {
             int aliveCount = contestants.Count(c => c.Health > 0);
@@ -358,12 +465,12 @@ namespace HungerGamesSimulator
             if (aliveCount <= 5 && TotalZones > 5) // Shrink to 5 zones when 5 tributes are left
             {
                 TotalZones = 5;
-                Console.WriteLine("\n🌍 The arena shrinks! The tributes are now confined to fewer zones.");
+                Console.WriteLine("\n The arena shrinks! The tributes are now confined to fewer zones.");
             }
             else if (aliveCount <= 3 && TotalZones > 3) // Shrink to 3 zones when 3 tributes are left
             {
                 TotalZones = 3;
-                Console.WriteLine("\n🌍 The arena shrinks further! The tributes are now confined to 3 zones.");
+                Console.WriteLine("\n The arena shrinks further! The tributes are now confined to 3 zones.");
             }
         }
 
