@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace HungerGamesSimulator
 {
@@ -10,12 +11,12 @@ namespace HungerGamesSimulator
             Console.WriteLine("--------------------------------------\n");
         }
 
-        public static void DisplayContestants(string[] contestants)
+        public static void DisplayContestants(List<Contestant> contestants)
         {
-            Console.WriteLine("Tributes entering the arena:");
-            foreach (var name in contestants)
+            Console.WriteLine($"Tributes entering the arena ({contestants.Count}):");
+            foreach (var contestant in contestants)
             {
-                Console.WriteLine($"- {name}");
+                Console.WriteLine($"- District {contestant.District}: {contestant.FullName}");
             }
             Console.WriteLine();
         }
