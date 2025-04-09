@@ -100,7 +100,7 @@ namespace HungerGamesSimulator
                             {
                                 member.Alliance = "None";
                             }
-                            Console.WriteLine($"⚠️ The '{alliance.Key}' alliance has dissolved under pressure!");
+                            Console.WriteLine($"The '{alliance.Key}' alliance has dissolved under pressure!");
                         }
                     }
                 }
@@ -172,6 +172,7 @@ namespace HungerGamesSimulator
             }
 
             Dictionary<string, List<Contestant>> allianceMembers = activeAlliances.ToDictionary(a => a, a => new List<Contestant>());
+            var grouped = allianceMembers.GroupBy(activeAlliances).ToList(); //added 
             List<Contestant> shuffled = contestants.OrderBy(_ => rng.Next()).ToList();
             int index = 0;
 
@@ -182,7 +183,7 @@ namespace HungerGamesSimulator
                 var tribute = shuffled[index];
                 if (rng.NextDouble() < 0.4)
                 {
-                    var eligible = allianceMembers.Where(kvp => kvp.Value.Count < 4).Select(kvp => kvp.Key).ToList();
+                    var eligible = allianceMembers.Where(kvp => kvp.Value.Count < 4).Select(kvp => kvp.Key).ToList(); 
                     if (eligible.Count > 0)
                     {
                         string chosen = eligible[rng.Next(eligible.Count)];
@@ -268,12 +269,17 @@ namespace HungerGamesSimulator
                 {
                     contestant.Health = contestant.Health - dyingfromstuff; 
                 }
-                if(contestant.Thirst <= 0 && contestant.Health <= 0) 
+                if((contestant.Thirst <= 0 && contestant.Hunger <= 0)  && contestant.Health <= 0) 
+                {
+                    Console.WriteLine($"{contestant.FullName} Has Died of Exposure"); 
+
+                }
+                else if(contestant.Thirst <= 0 && contestant.Health <= 0) 
                 {
                     Console.WriteLine($"{contestant.FullName} Has Died of Thirst"); 
 
                 }
-                if(contestant.Hunger <= 0 && contestant.Health <= 0) 
+                else if(contestant.Hunger <= 0 && contestant.Health <= 0) 
                 {
                     Console.WriteLine($"{contestant.FullName} Has Died of Hunger"); 
 
@@ -291,7 +297,7 @@ namespace HungerGamesSimulator
         {
             while (contestants.Count(c => c.LocationId == zone && c.Health > 0) > 1)
             {
-                var fighters = contestants.Where(c => c.LocationId == zone && c.Health > 0).OrderBy(_ => rng.Next()).ToList(); // shuffles all the fighters in that zone to randomize the fights
+                var fighters = contestants.Where(c => c.LocationId == zone && c.Health > 0).OrderBy(_ => rng.Next()).ToList(); // shuffles all the fighters in that zone to randomize the fights // refactor
 
                 var attacker = fighters[0];
                 var defender = fighters[1];
@@ -323,7 +329,7 @@ namespace HungerGamesSimulator
 
         private static void RunZoneTurns(List<Contestant> contestants)
         {
-            var activeZones = contestants.Where(c => c.Health > 0).Select(c => c.LocationId).Distinct();
+            var activeZones = contestants.Where(c => c.Health > 0).Select(c => c.LocationId).Distinct(); // refactor
             foreach (int zone in activeZones)
             {
                 var zoneTributes = contestants.Where(c => c.LocationId == zone && c.Health > 0).ToList();
