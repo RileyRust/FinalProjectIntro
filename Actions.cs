@@ -9,8 +9,8 @@ namespace HungerGamesSimulator
     {
         private static Random rng = new Random();
 
-        private static readonly string[] CommonLoot = { "Bread", "Canteen", "Bandages","Rock","Apple","Ripped Shirt","Club","Slingshot","Caprisun","Knife" };
-        private static readonly string[] RareLoot = { "Spear", "Medkit", "Bow","Sword","Trident","Jerky","Chocolate Milk" };
+        private static readonly string[] CommonLoot = { "Bread", "Canteen", "Bandages", "Rock", "Apple", "Ripped Shirt", "Club", "Slingshot", "Caprisun", "Knife" };
+        private static readonly string[] RareLoot = { "Spear", "Medkit", "Bow", "Sword", "Trident", "Jerky", "Chocolate Milk" };
         private static readonly string[] AllianceNames = { "Wolf Pack", "Stealth Squad", "Fire Alliance", "Nightwatchers" };
 
         private static readonly Dictionary<string, int> WeaponBuffs = new Dictionary<string, int>
@@ -24,13 +24,13 @@ namespace HungerGamesSimulator
             { "Sword", 6 },
             { "Trident", 7 }
         };
-         private static readonly Dictionary<string, int> HealthBuffs = new Dictionary<string, int>
+        private static readonly Dictionary<string, int> HealthBuffs = new Dictionary<string, int>
         {
              { "Ripped Shirt", 1 },
              { "Bandage", 5 },
             { "Medkit", 10 }
         };
-           private static readonly Dictionary<string, int> FoodBuffs = new Dictionary<string, int>
+        private static readonly Dictionary<string, int> FoodBuffs = new Dictionary<string, int>
         {
             {"Apple", 1 },
             {"Bread", 3 },
@@ -56,7 +56,7 @@ namespace HungerGamesSimulator
             Console.WriteLine("\n Loot Summary:");
             contestants.Where(c => c.Loot != "None").ToList().ForEach(c =>
             {
-                if (new[] { "Knife", "Spear", "Bow","Trident", "Sword","Rock","Club", "Slingshot" }.Contains(c.Loot))
+                if (new[] { "Knife", "Spear", "Bow", "Trident", "Sword", "Rock", "Club", "Slingshot" }.Contains(c.Loot))
                     Console.WriteLine($"{c.FullName} (District {c.District}) - Loot: {c.Loot}, Weapon Buff: {c.WeaponBuff}");
                 else
                     Console.WriteLine($"{c.FullName} (District {c.District}) - Loot: {c.Loot}");
@@ -68,6 +68,7 @@ namespace HungerGamesSimulator
 
             Console.WriteLine("\n Night falls over the arena...");
             ShowFallenTributes(contestants);
+             CarePackage(contestants,WeaponBuffs,HealthBuffs,FoodBuffs,ThirstBuffs);
 
             Console.WriteLine("\nPress any key to continue to the next day...");
             Console.ReadKey();
@@ -77,7 +78,7 @@ namespace HungerGamesSimulator
                 Console.WriteLine("\n A new day dawns...");
 
                 var aliveBefore = contestants.Where(c => c.Health > 0).Select(c => c.FullName).ToHashSet();
-                
+
                 AdjustArenaSize(contestants);
 
                 RunZoneTurns(contestants);
@@ -138,9 +139,9 @@ namespace HungerGamesSimulator
                     }
                 }
 
-                 ThirstandHunger(contestants); 
+                 CarePackage(contestants,WeaponBuffs,HealthBuffs,FoodBuffs,ThirstBuffs);
 
-                // Add a keypress to continue after a night phase
+                ThirstandHunger(contestants); 
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
 
@@ -172,7 +173,11 @@ namespace HungerGamesSimulator
             }
 
             Dictionary<string, List<Contestant>> allianceMembers = activeAlliances.ToDictionary(a => a, a => new List<Contestant>());
-            var grouped = allianceMembers.GroupBy(activeAlliances).ToList(); //added 
+            var grouped = contestants
+              .Where(c => c.Alliance != "None")
+              .GroupBy(c => c.Alliance)
+              .ToList();
+
             List<Contestant> shuffled = contestants.OrderBy(_ => rng.Next()).ToList();
             int index = 0;
 
@@ -183,7 +188,7 @@ namespace HungerGamesSimulator
                 var tribute = shuffled[index];
                 if (rng.NextDouble() < 0.4)
                 {
-                    var eligible = allianceMembers.Where(kvp => kvp.Value.Count < 4).Select(kvp => kvp.Key).ToList(); 
+                    var eligible = allianceMembers.Where(kvp => kvp.Value.Count < 4).Select(kvp => kvp.Key).ToList();
                     if (eligible.Count > 0)
                     {
                         string chosen = eligible[rng.Next(eligible.Count)];
@@ -197,7 +202,7 @@ namespace HungerGamesSimulator
         }
 
 
-        
+
 
         private static void AssignLoot(List<Contestant> contestants)
         {
@@ -254,34 +259,34 @@ namespace HungerGamesSimulator
                 contestant.RanAway = false;
             }
         }
-       
-       private static void ThirstandHunger(List<Contestant> contestants)
+
+        private static void ThirstandHunger(List<Contestant> contestants)
         {
             foreach (var contestant in contestants)
             {
-                int DailyThirst = 10; 
-                int DailyHunger = 10; 
-                int dyingfromstuff = 20; 
+                int DailyThirst = 2;
+                int DailyHunger = 2;
+                int dyingfromstuff = 2;
 
-                contestant.Thirst = contestant.Thirst - DailyThirst; 
-                contestant.Hunger = contestant.Hunger - DailyHunger; 
-                if( contestant.Hunger == 0 || contestant.Thirst == 0 )
+                contestant.Thirst = contestant.Thirst - DailyThirst;
+                contestant.Hunger = contestant.Hunger - DailyHunger;
+                if (contestant.Hunger == 0 || contestant.Thirst == 0)
                 {
-                    contestant.Health = contestant.Health - dyingfromstuff; 
+                    contestant.Health = contestant.Health - dyingfromstuff;
                 }
-                if((contestant.Thirst <= 0 && contestant.Hunger <= 0)  && contestant.Health <= 0) 
+                if ((contestant.Thirst <= 0 && contestant.Hunger <= 0) && contestant.Health <= 0)
                 {
-                    Console.WriteLine($"{contestant.FullName} Has Died of Exposure"); 
-
-                }
-                else if(contestant.Thirst <= 0 && contestant.Health <= 0) 
-                {
-                    Console.WriteLine($"{contestant.FullName} Has Died of Thirst"); 
+                    Console.WriteLine($"{contestant.FullName} Has Died of Exposure");
 
                 }
-                else if(contestant.Hunger <= 0 && contestant.Health <= 0) 
+                else if (contestant.Thirst <= 0 && contestant.Health <= 0)
                 {
-                    Console.WriteLine($"{contestant.FullName} Has Died of Hunger"); 
+                    Console.WriteLine($"{contestant.FullName} Has Died of Thirst");
+
+                }
+                else if (contestant.Hunger <= 0 && contestant.Health <= 0)
+                {
+                    Console.WriteLine($"{contestant.FullName} Has Died of Hunger");
 
                 }
             }
@@ -297,7 +302,8 @@ namespace HungerGamesSimulator
         {
             while (contestants.Count(c => c.LocationId == zone && c.Health > 0) > 1)
             {
-                var fighters = contestants.Where(c => c.LocationId == zone && c.Health > 0).OrderBy(_ => rng.Next()).ToList(); // shuffles all the fighters in that zone to randomize the fights // refactor
+                var eligiblefighters = contestants.Where(c => c.LocationId == zone && c.Health > 0);
+                var fighters = eligiblefighters.OrderBy(c => rng.Next()).ToList();
 
                 var attacker = fighters[0];
                 var defender = fighters[1];
@@ -478,8 +484,78 @@ namespace HungerGamesSimulator
                 TotalZones = 3;
                 Console.WriteLine("\n The arena shrinks further! The tributes are now confined to 3 zones.");
             }
+
         }
 
+        private static void CarePackage(
+    List<Contestant> contestants,
+    Dictionary<string, int> WeaponBuffs,
+    Dictionary<string, int> HealthBuffs,
+    Dictionary<string, int> FoodBuffs,
+    Dictionary<string, int> ThirstBuffs)
+        {
+              Console.WriteLine("Would you like to send a package?");
+            string yesorno = Console.ReadLine().; 
+            if(yesorno == "yes"){
+
+            }
+            Console.WriteLine("Who would like to send a care package to?");
+            string selectedPerson = Console.ReadLine().ToLower();
+
+            bool found = false;
+
+            foreach (var contestant in contestants)
+            {
+                if (contestant.FullName.ToLower() == selectedPerson && contestant.Health > 0)
+                {
+                    Console.WriteLine("They have been found! What do you want to send them?");
+                    string item = Console.ReadLine().ToLower();
+
+                    Console.WriteLine($"{item} has been sent to {contestant.FullName}.");
+
+                    // Match by lowercased keys to support case-insensitive input
+                    var weaponMatch = WeaponBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
+                    var healthMatch = HealthBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
+                    var foodMatch = FoodBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
+                    var thirstMatch = ThirstBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
+
+                    if (!string.IsNullOrEmpty(weaponMatch.Key))
+                    {
+                        contestant.WeaponBuff += weaponMatch.Value;
+                        contestant.Loot = weaponMatch.Key;
+                        Console.WriteLine($"{contestant.FullName} received a {weaponMatch.Key}! Weapon buff increased by {weaponMatch.Value} (Total: {contestant.WeaponBuff}).");
+                    }
+
+                    else if (!string.IsNullOrEmpty(healthMatch.Key))
+                    {
+                        contestant.Health += healthMatch.Value;
+                        Console.WriteLine($"{contestant.FullName} healed for {healthMatch.Value} health.");
+                    }
+                    else if (!string.IsNullOrEmpty(foodMatch.Key))
+                    {
+                        contestant.Hunger = Math.Max(0, contestant.Hunger - foodMatch.Value); // assumes Hunger is int and lower is better
+                        Console.WriteLine($"{contestant.FullName} restored {foodMatch.Value} hunger.");
+                    }
+                    else if (!string.IsNullOrEmpty(thirstMatch.Key))
+                    {
+                        contestant.Thirst = Math.Max(0, contestant.Thirst - thirstMatch.Value); // assumes Thirst is int and lower is better
+                        Console.WriteLine($"{contestant.FullName} quenched their thirst by {thirstMatch.Value} points.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("The item had no effect.");
+                    }
+
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("Contestant could not be found in the arena.");
+            }
+        }
 
 
     }
