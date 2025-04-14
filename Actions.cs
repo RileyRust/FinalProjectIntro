@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 
-namespace HungerGamesSimulator
+namespace HungerGamesSimulator // add to game master UI so it sees everything 
 {
     public static class GameActions
     {
@@ -68,7 +68,7 @@ namespace HungerGamesSimulator
 
             Console.WriteLine("\n Night falls over the arena...");
             ShowFallenTributes(contestants);
-             CarePackage(contestants,WeaponBuffs,HealthBuffs,FoodBuffs,ThirstBuffs);
+            CarePackage(contestants);
 
             Console.WriteLine("\nPress any key to continue to the next day...");
             Console.ReadKey();
@@ -139,9 +139,9 @@ namespace HungerGamesSimulator
                     }
                 }
 
-                 CarePackage(contestants,WeaponBuffs,HealthBuffs,FoodBuffs,ThirstBuffs);
+                CarePackage(contestants);
 
-                ThirstandHunger(contestants); 
+                ThirstandHunger(contestants);
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
 
@@ -274,7 +274,7 @@ namespace HungerGamesSimulator
                 {
                     contestant.Health = contestant.Health - dyingfromstuff;
                 }
-                if ((contestant.Thirst <= 0 && contestant.Hunger <= 0) && contestant.Health <= 0)
+                if (contestant.Thirst <= 0 && contestant.Hunger <= 0 && contestant.Health <= 0)
                 {
                     Console.WriteLine($"{contestant.FullName} Has Died of Exposure");
 
@@ -487,74 +487,37 @@ namespace HungerGamesSimulator
 
         }
 
-        private static void CarePackage(
-    List<Contestant> contestants,
-    Dictionary<string, int> WeaponBuffs,
-    Dictionary<string, int> HealthBuffs,
-    Dictionary<string, int> FoodBuffs,
-    Dictionary<string, int> ThirstBuffs)
+        private static void CarePackage(List<Contestant> contestants) 
         {
-              Console.WriteLine("Would you like to send a package?");
-            string yesorno = Console.ReadLine().ToLower(); 
-            if(yesorno == "yes"){
-
-            Console.WriteLine("Who would like to send a care package to?");
-            string selectedPerson = Console.ReadLine().ToLower();
-
-            bool found = false;
-
+            double rollFactor = .90;
             foreach (var contestant in contestants)
             {
-                if (contestant.FullName.ToLower() == selectedPerson && contestant.Health > 0)
+
+                if ((contestant.Charimsa / 20.0) >= rollFactor)
                 {
-                    Console.WriteLine("They have been found! What do you want to send them?");
-                    string item = Console.ReadLine().ToLower();
-                    
-                    var weaponMatch = WeaponBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
-                    var healthMatch = HealthBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
-                    var foodMatch = FoodBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
-                    var thirstMatch = ThirstBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
-
-                    if (!string.IsNullOrEmpty(weaponMatch.Key))
-                    {
-                        contestant.WeaponBuff += weaponMatch.Value;
-                        contestant.Loot = weaponMatch.Key;
-                        Console.WriteLine($"{contestant.FullName} received a {weaponMatch.Key}!");
-                    }
-
-                    else if (!string.IsNullOrEmpty(healthMatch.Key))
-                    {
-                        contestant.Health += healthMatch.Value;
-                        Console.WriteLine($"{contestant.FullName} healed for {healthMatch.Value} health.");
-                    }
-                    else if (!string.IsNullOrEmpty(foodMatch.Key))
-                    {
-                        contestant.Hunger =+ foodMatch.Value; // assumes Hunger is int and lower is better
-                        Console.WriteLine($"{contestant.FullName} restored {foodMatch.Value} hunger.");
-                    }
-                    else if (!string.IsNullOrEmpty(thirstMatch.Key))
-                    {
-                        contestant.Thirst =+ thirstMatch.Value; // assumes Thirst is int and lower is better
-                        Console.WriteLine($"{contestant.FullName} quenched their thirst by {thirstMatch.Value} points.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("The item had no effect.");
-                    }
-
-                    found = true;
-                    break;
+                    contestant.Loot = RareLoot[rng.Next(RareLoot.Length)];
                 }
+                else
+                {
+                   int charismabuff = RollDice(1,5); 
+                   contestant.Charimsa += charismabuff; 
+                }
+                if (WeaponBuffs.ContainsKey(contestant.Loot))
+                    contestant.WeaponBuff += WeaponBuffs[contestant.Loot];
+                if (HealthBuffs.ContainsKey(contestant.Loot))
+                    contestant.Health += HealthBuffs[contestant.Loot];
+                if (FoodBuffs.ContainsKey(contestant.Loot))
+                    contestant.Hunger += FoodBuffs[contestant.Loot];
+                if (ThirstBuffs.ContainsKey(contestant.Loot))
+                    contestant.Thirst += ThirstBuffs[contestant.Loot];
+
+
+
             }
 
-            if (!found)
-            {
-                Console.WriteLine("Contestant could not be found in the arena.");
-            }
         }
-            }
-            
-
-
     }
+
+
+
 }

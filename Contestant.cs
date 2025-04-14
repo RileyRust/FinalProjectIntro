@@ -5,6 +5,7 @@ namespace HungerGamesSimulator
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName => $"{FirstName} {LastName}";
+        public int Charimsa{ get; set; } = 0;
 
         public int District { get; set; }
         public int Health { get; set; } = 20;
