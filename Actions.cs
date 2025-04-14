@@ -495,10 +495,9 @@ namespace HungerGamesSimulator
     Dictionary<string, int> ThirstBuffs)
         {
               Console.WriteLine("Would you like to send a package?");
-            string yesorno = Console.ReadLine().; 
+            string yesorno = Console.ReadLine().ToLower(); 
             if(yesorno == "yes"){
 
-            }
             Console.WriteLine("Who would like to send a care package to?");
             string selectedPerson = Console.ReadLine().ToLower();
 
@@ -510,10 +509,7 @@ namespace HungerGamesSimulator
                 {
                     Console.WriteLine("They have been found! What do you want to send them?");
                     string item = Console.ReadLine().ToLower();
-
-                    Console.WriteLine($"{item} has been sent to {contestant.FullName}.");
-
-                    // Match by lowercased keys to support case-insensitive input
+                    
                     var weaponMatch = WeaponBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
                     var healthMatch = HealthBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
                     var foodMatch = FoodBuffs.FirstOrDefault(kvp => kvp.Key.ToLower() == item);
@@ -523,7 +519,7 @@ namespace HungerGamesSimulator
                     {
                         contestant.WeaponBuff += weaponMatch.Value;
                         contestant.Loot = weaponMatch.Key;
-                        Console.WriteLine($"{contestant.FullName} received a {weaponMatch.Key}! Weapon buff increased by {weaponMatch.Value} (Total: {contestant.WeaponBuff}).");
+                        Console.WriteLine($"{contestant.FullName} received a {weaponMatch.Key}!");
                     }
 
                     else if (!string.IsNullOrEmpty(healthMatch.Key))
@@ -533,12 +529,12 @@ namespace HungerGamesSimulator
                     }
                     else if (!string.IsNullOrEmpty(foodMatch.Key))
                     {
-                        contestant.Hunger = Math.Max(0, contestant.Hunger - foodMatch.Value); // assumes Hunger is int and lower is better
+                        contestant.Hunger =+ foodMatch.Value; // assumes Hunger is int and lower is better
                         Console.WriteLine($"{contestant.FullName} restored {foodMatch.Value} hunger.");
                     }
                     else if (!string.IsNullOrEmpty(thirstMatch.Key))
                     {
-                        contestant.Thirst = Math.Max(0, contestant.Thirst - thirstMatch.Value); // assumes Thirst is int and lower is better
+                        contestant.Thirst =+ thirstMatch.Value; // assumes Thirst is int and lower is better
                         Console.WriteLine($"{contestant.FullName} quenched their thirst by {thirstMatch.Value} points.");
                     }
                     else
@@ -556,6 +552,8 @@ namespace HungerGamesSimulator
                 Console.WriteLine("Contestant could not be found in the arena.");
             }
         }
+            }
+            
 
 
     }
