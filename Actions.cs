@@ -14,7 +14,7 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
         public static void StartSimulation(List<Contestant> contestants)
         {
             GameUI.DisplayContestants(contestants);
-            //Sponsor.WantstoBet(); 
+            SponsorWindow.WantstoBet(contestants); 
             int daycount = 0;
 
             TributeStuff.FormAlliances(contestants);
