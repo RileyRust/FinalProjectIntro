@@ -1,63 +1,68 @@
+using System;
 using System.Collections.Generic;
-
+using System.Linq;
 namespace HungerGamesSimulator
 {
     public class SponsorWindow
     {
-
-        public static void WantstoBet(List<Contestant> contestants)
+        public static void WantstoBet(List<Contestant> contestants, Sponsor sponsor)
         {
-            bool WantstoBetonTribute = true;
-            while (WantstoBetonTribute == true)
+            bool wantToBet = true;
+
+            while (wantToBet)
             {
-                Console.WriteLine("Would you Like to Bet? Yes/No");
-                string Answer = Console.ReadLine();
-                string RealAnswer = Answer.ToLower();
-                if (RealAnswer == "yes")
+                Console.WriteLine("Would you like to bet? Yes/No");
+                string input = Console.ReadLine()?.Trim().ToLower();
+
+                if (input == "yes")
                 {
-                    Console.WriteLine("you are in the corerct spot");
-                    BetWindow(contestants);
+                    Console.WriteLine("You're in the correct spot.");
+                    BetWindow(contestants, sponsor); // pass sponsor
                 }
-                else if (RealAnswer == "no")
+                else if (input == "no")
                 {
-                    WantstoBetonTribute = false;
+                    wantToBet = false;
                 }
                 else
                 {
-                    Console.WriteLine("Not a valid answer!!!!\n");
+                    Console.WriteLine("Not a valid answer! Please type 'yes' or 'no'.\n");
                 }
             }
         }
 
-        public static void BetWindow(List<Contestant> contestants)
+
+        public static void BetWindow(List<Contestant> contestants, Sponsor sponsor)
         {
-            int Money = 100; 
             GameUI.DisplayContestants(contestants);
-            Console.WriteLine("Who would you like to bet on");
+
+            Console.WriteLine("Who would you like to bet on?");
             string selectedName = Console.ReadLine();
-            Contestant selectedContestant = contestants
-      .FirstOrDefault(c => c.FullName.Equals(selectedName, StringComparison.OrdinalIgnoreCase));
+
+            var selectedContestant = contestants
+                .FirstOrDefault(c => c.FullName.Equals(selectedName, StringComparison.OrdinalIgnoreCase));
 
             if (selectedContestant != null)
             {
-                Console.WriteLine($"{selectedContestant.FullName} has been found. Good luck!");
-                Placebet(selectedContestant.FullName, Money); 
+                Console.WriteLine($"{selectedContestant.FullName} has been found.");
+                Console.WriteLine($"Your current balance is ${sponsor.Balance}.");
+                Console.WriteLine("How much would you like to bet?");
+
+                string input = Console.ReadLine();
+                int amount;
+
+                while (!int.TryParse(input, out amount) || amount <= 0 || amount > sponsor.Balance)
+                {
+                    Console.WriteLine($"Enter a valid number between 1 and {sponsor.Balance}:");
+                    input = Console.ReadLine();
+                }
+
+                sponsor.PlaceBet(selectedContestant.FullName, amount);
             }
             else
             {
                 Console.WriteLine("No such contestant found.");
             }
-
-
-
         }
-        public static void Placebet(string contestantName, int money)
-        {
-         Console.WriteLine(contestantName);
-          Console.WriteLine(money);
-          //works
-        }
-
 
     }
 }

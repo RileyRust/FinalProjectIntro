@@ -14,7 +14,9 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
         public static void StartSimulation(List<Contestant> contestants)
         {
             GameUI.DisplayContestants(contestants);
-            SponsorWindow.WantstoBet(contestants); 
+          Sponsor sponsor = new Sponsor(); // create the sponsor object
+            SponsorWindow.WantstoBet(contestants, sponsor); // pass it in
+
             int daycount = 0;
 
             TributeStuff.FormAlliances(contestants);
@@ -123,6 +125,8 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
             if (winner != null)
             {
                 Console.WriteLine($"\n {winner.FullName} (District {winner.District}) is the victor of the Hunger Games!");
+                sponsor.ResolveBet(winner.FullName);
+
             }
         }
 
