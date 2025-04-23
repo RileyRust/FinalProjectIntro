@@ -60,7 +60,7 @@ namespace HungerGamesSimulator
             {
                 var zoneTributes = contestants.Where(c => c.LocationId == zone && c.Health > 0).ToList();
 
-                if (zoneTributes.Count < 2) continue; // Combat only happens if there are at least two tributes
+                if (zoneTributes.Count < 2) continue; 
 
                 var a = zoneTributes[0];
                 var b = zoneTributes[1];

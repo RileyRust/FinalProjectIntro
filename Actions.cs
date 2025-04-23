@@ -14,8 +14,8 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
         public static void StartSimulation(List<Contestant> contestants)
         {
             GameUI.DisplayContestants(contestants);
-          Sponsor sponsor = new Sponsor(); // create the sponsor object
-            SponsorWindow.WantstoBet(contestants, sponsor); // pass it in
+          Sponsor sponsor = new Sponsor(); 
+            SponsorWindow.WantstoBet(contestants, sponsor); 
 
             int daycount = 0;
 
@@ -81,10 +81,10 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
                 {
                     Console.WriteLine("\n Final Battle Begins between the last two tributes!");
 
-                    // Get the two remaining tributes
+                    
                     var finalTwo = contestants.Where(c => c.Health > 0).ToList();
 
-                    // Run the final combat between them
+                    
                     CombatStuff.RunFinalCombat(finalTwo[0], finalTwo[1]);
 
 

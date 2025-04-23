@@ -137,7 +137,7 @@ namespace HungerGamesSimulator
                     contestant.Loot = "None";
                 }
 
-                // ✅ Health
+                
                 if (HealthBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Health += HealthBuffs[contestant.Loot];
@@ -148,7 +148,7 @@ namespace HungerGamesSimulator
                         contestant.AppliedHealthBuffs.Add(contestant.Loot, 1);
                 }
 
-                // ✅ Food
+             
                 if (FoodBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Hunger += FoodBuffs[contestant.Loot];
@@ -159,7 +159,7 @@ namespace HungerGamesSimulator
                         contestant.AppliedFoodBuffs.Add(contestant.Loot, 1);
                 }
 
-                // ✅ Thirst
+             
                 if (ThirstBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Thirst += ThirstBuffs[contestant.Loot];
