@@ -73,7 +73,7 @@ namespace HungerGamesSimulator
                 if (c.LocationId < AreanaControl.TotalZones - 1) possibleMoves.Add(c.LocationId + 1);
 
                 int newZone = possibleMoves[rng.Next(possibleMoves.Count)];
-                Console.WriteLine($"{c.FullName} cautiously moves from zone {c.LocationId} to zone {newZone} {c.Health} {c.Alliance} f {c.Hunger} t{c.Thirst}.");
+                Console.WriteLine($"{c.FullName} cautiously moves from zone {c.LocationId} to zone {newZone}");
                 c.LocationId = newZone;
             }
         }

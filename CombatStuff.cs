@@ -84,9 +84,15 @@ namespace HungerGamesSimulator
 
                         Console.WriteLine($"{winner.FullName} killed {loser.FullName} with their bare hands");
                         winner.Charisma += 6;
-                        Console.WriteLine($" {winner.FullName}'s Charisma increased to {winner.Charisma}");
-                    }
+                        Console.WriteLine($"{winner.FullName}'s Charisma increased to {winner.Charisma}");
 
+                        if(loser.Loot != null)
+                        {
+                         Console.WriteLine($"{loser.FullName} dropped {loser.Loot} to the ground blood coating it");
+                        }
+
+                    }
+                    
 
                 }
                 else

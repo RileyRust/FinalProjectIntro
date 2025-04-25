@@ -5,6 +5,7 @@ namespace HungerGamesSimulator
 {
     public static class AreanaControl
     {
+        
         private static Random rng = new Random();
 
         public static int TotalZones { get; set; } = 10;

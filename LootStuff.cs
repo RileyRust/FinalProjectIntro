@@ -57,7 +57,17 @@ namespace HungerGamesSimulator
                 {
                     string GeneratedLoot = RareLoot[rng.Next(RareLoot.Length)];
                     contestant.Loot = GeneratedLoot;
-                    Console.WriteLine($"{contestant.FullName} Received a {GeneratedLoot}");
+                    string[] carePackageMessages = {
+    $"{contestant.FullName} looks to the sky as a silver parachute descends, glinting in the sunlight. Inside: a {GeneratedLoot}.",
+    $"A soft whir cuts through the silence. {contestant.FullName} rushes to grab the care package before others notice. They've secured a {GeneratedLoot}.",
+    $"Cheers erupt from hidden sponsors as {contestant.FullName} earns a {GeneratedLoot} — their charisma has paid off.",
+    $"From the sky, a gift floats down gently. {contestant.FullName} clutches the {GeneratedLoot}, a small edge in a deadly game.",
+    $"{contestant.FullName} hears the ping of a descending drone. With trembling hands, they open the container to find a {GeneratedLoot}.",
+    $"A sponsor’s favor arrives at just the right time. {contestant.FullName} receives a {GeneratedLoot}, their eyes wide with hope."
+};
+
+
+                    Console.WriteLine(carePackageMessages[rng.Next(carePackageMessages.Length)]);
                     contestant.GotLoot = true;
                 }
                 else if (contestant.Charisma / 80.0 >= secondCheckforCarePackage && contestant.GotLootSecond == false && (contestant.Health > 0))
