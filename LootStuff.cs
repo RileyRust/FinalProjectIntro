@@ -4,7 +4,7 @@ namespace HungerGamesSimulator
 {
     public class LootStuff
     {
-              private static Random rng = new Random();
+        private static Random rng = new Random();
 
         public static readonly string[] CommonLoot = { "Bread", "Canteen", "Bandages", "Rock", "Apple", "Ripped Shirt", "Club", "Slingshot", "Caprisun", "Knife" };
         public static readonly string[] RareLoot = { "Spear", "Medkit", "Bow", "Sword", "Trident", "Jerky", "Chocolate Milk" };
@@ -39,12 +39,12 @@ namespace HungerGamesSimulator
             {"Canteen", 3},
             {"Chocolate Milk", 5}
         };
-          public static int RollDice(int min, int max)
+        public static int RollDice(int min, int max)
         {
             return rng.Next(min, max + 1);
         }
 
-       public static void CarePackage(List<Contestant> contestants)
+        public static void CarePackage(List<Contestant> contestants)
         {
             double checkForCarePackage = 0.90;
             double secondCheckforCarePackage = 0.50;
@@ -74,40 +74,32 @@ namespace HungerGamesSimulator
                     contestant.Charisma += Charismabuff;
                 }
 
-                if (HealthBuffs.ContainsKey(contestant.Loot))
+                if (HealthBuffs.ContainsKey(contestant.Loot) &&
+     !contestant.AppliedHealthBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Health += HealthBuffs[contestant.Loot];
-
-                    if (contestant.AppliedHealthBuffs.ContainsKey(contestant.Loot))
-                        contestant.AppliedHealthBuffs[contestant.Loot]++;
-                    else
-                        contestant.AppliedHealthBuffs.Add(contestant.Loot, 1);
+                    contestant.AppliedHealthBuffs[contestant.Loot] = 1;
                 }
 
-                if (FoodBuffs.ContainsKey(contestant.Loot))
+                if (FoodBuffs.ContainsKey(contestant.Loot) &&
+                    !contestant.AppliedFoodBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Hunger += FoodBuffs[contestant.Loot];
-
-                    if (contestant.AppliedFoodBuffs.ContainsKey(contestant.Loot))
-                        contestant.AppliedFoodBuffs[contestant.Loot]++;
-                    else
-                        contestant.AppliedFoodBuffs.Add(contestant.Loot, 1);
+                    contestant.AppliedFoodBuffs[contestant.Loot] = 1;
                 }
 
-                if (ThirstBuffs.ContainsKey(contestant.Loot))
+                if (ThirstBuffs.ContainsKey(contestant.Loot) &&
+                    !contestant.AppliedThirstBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Thirst += ThirstBuffs[contestant.Loot];
-
-                    if (contestant.AppliedThirstBuffs.ContainsKey(contestant.Loot))
-                        contestant.AppliedThirstBuffs[contestant.Loot]++;
-                    else
-                        contestant.AppliedThirstBuffs.Add(contestant.Loot, 1);
+                    contestant.AppliedThirstBuffs[contestant.Loot] = 1;
                 }
+
 
 
             }
         }
-         public static void AssignLoot(List<Contestant> contestants)
+        public static void AssignLoot(List<Contestant> contestants)
         {
             Console.WriteLine("\n Loot scramble...");
             foreach (var contestant in contestants)
@@ -137,43 +129,33 @@ namespace HungerGamesSimulator
                     contestant.Loot = "None";
                 }
 
-                
-                if (HealthBuffs.ContainsKey(contestant.Loot))
+
+                if (HealthBuffs.ContainsKey(contestant.Loot) &&
+     !contestant.AppliedHealthBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Health += HealthBuffs[contestant.Loot];
-
-                    if (contestant.AppliedHealthBuffs.ContainsKey(contestant.Loot))
-                        contestant.AppliedHealthBuffs[contestant.Loot]++;
-                    else
-                        contestant.AppliedHealthBuffs.Add(contestant.Loot, 1);
+                    contestant.AppliedHealthBuffs[contestant.Loot] = 1;
                 }
 
-             
-                if (FoodBuffs.ContainsKey(contestant.Loot))
+                if (FoodBuffs.ContainsKey(contestant.Loot) &&
+                    !contestant.AppliedFoodBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Hunger += FoodBuffs[contestant.Loot];
-
-                    if (contestant.AppliedFoodBuffs.ContainsKey(contestant.Loot))
-                        contestant.AppliedFoodBuffs[contestant.Loot]++;
-                    else
-                        contestant.AppliedFoodBuffs.Add(contestant.Loot, 1);
+                    contestant.AppliedFoodBuffs[contestant.Loot] = 1;
                 }
 
-             
-                if (ThirstBuffs.ContainsKey(contestant.Loot))
+                if (ThirstBuffs.ContainsKey(contestant.Loot) &&
+                    !contestant.AppliedThirstBuffs.ContainsKey(contestant.Loot))
                 {
                     contestant.Thirst += ThirstBuffs[contestant.Loot];
-
-                    if (contestant.AppliedThirstBuffs.ContainsKey(contestant.Loot))
-                        contestant.AppliedThirstBuffs[contestant.Loot]++;
-                    else
-                        contestant.AppliedThirstBuffs.Add(contestant.Loot, 1);
+                    contestant.AppliedThirstBuffs[contestant.Loot] = 1;
                 }
+
 
 
             }
         }
 
-        
+
     }
 }

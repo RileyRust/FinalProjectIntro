@@ -70,13 +70,6 @@ namespace HungerGamesSimulator
                     Console.WriteLine($"\n Fight in zone {zone}!");
                     CombatStuff.RunCombatLoop(zoneTributes, zone);
                 }
-                else if (a.Alliance == "None")
-                {
-                    string newAlliance = "ZoneAllies" + zone;
-                    a.Alliance = newAlliance;
-                    b.Alliance = newAlliance;
-                    Console.WriteLine($" {a.FullName} and {b.FullName} formed a new alliance in zone {zone}!");
-                }
             }
         }
     }

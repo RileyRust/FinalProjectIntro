@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 
-namespace HungerGamesSimulator // add to game master UI so it sees everything 
+namespace HungerGamesSimulator
 {
     public static class GameActions
     {
-         private static Random rng = new Random();
-  
-
+        private static Random rng = new Random();
 
         public static void StartSimulation(List<Contestant> contestants)
         {
             GameUI.DisplayContestants(contestants);
-          Sponsor sponsor = new Sponsor(); 
-            SponsorWindow.WantstoBet(contestants, sponsor); 
+            Sponsor sponsor = new Sponsor();
+            SponsorWindow.WantstoBet(contestants, sponsor);
 
             int daycount = 0;
 
@@ -35,7 +33,6 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
             Console.WriteLine("\n Cornucopia Battle Begins!");
             CombatStuff.RunCombatLoop(contestants, 0);
 
-
             Console.WriteLine("\n Night falls over the arena...");
             daycount++;
             TributeStuff.ShowFallenTributes(contestants);
@@ -51,12 +48,15 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
                 var aliveBefore = contestants.Where(c => c.Health > 0).Select(c => c.FullName).ToHashSet();
 
                 AreanaControl.AdjustArenaSize(contestants);
-
-
                 AreanaControl.RunZoneTurns(contestants);
 
                 Console.WriteLine("\n Tributes move through the arena...");
                 TributeStuff.MoveTributes(contestants);
+
+                for (int zone = 0; zone < AreanaControl.TotalZones; zone++)
+                {
+                    CombatStuff.RunCombatLoop(contestants, zone);
+                }
 
                 int aliveCount = contestants.Count(c => c.Health > 0);
                 if (aliveCount <= 6)
@@ -77,19 +77,15 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
                         }
                     }
                 }
+
                 if (contestants.Count(c => c.Health > 0) == 2)
                 {
                     Console.WriteLine("\n Final Battle Begins between the last two tributes!");
-
-                    
                     var finalTwo = contestants.Where(c => c.Health > 0).ToList();
-
-                    
                     CombatStuff.RunFinalCombat(finalTwo[0], finalTwo[1]);
-
-
                     break;
                 }
+
                 Console.WriteLine("\n Night falls...");
 
                 var newDeaths = contestants
@@ -110,23 +106,18 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
                 }
 
                 LootStuff.CarePackage(contestants);
-
                 FoodStuff.ThirstandHunger(contestants);
+
                 daycount++;
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
-
-
-
             }
-
 
             var winner = contestants.FirstOrDefault(c => c.Health > 0);
             if (winner != null)
             {
-                Console.WriteLine($"\n {winner.FullName} (District {winner.District}) is the victor of the Hunger Games!");
+                Console.WriteLine($"\n{winner.FullName} (District {winner.District}) is the victor of the Hunger Games!");
                 sponsor.ResolveBet(winner.FullName);
-
             }
         }
 
@@ -134,10 +125,5 @@ namespace HungerGamesSimulator // add to game master UI so it sees everything
         {
             return rng.Next(min, max + 1);
         }
-
-
     }
-
-
-
 }
