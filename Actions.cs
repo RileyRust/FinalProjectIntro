@@ -11,6 +11,11 @@ namespace HungerGamesSimulator
 
         public static void StartSimulation(List<Contestant> contestants)
         {
+
+            contestants = contestants
+                .GroupBy(c => (c.FullName, c.District))
+                .Select(g => g.First())
+                .ToList();
             GameUI.DisplayContestants(contestants);
             Sponsor sponsor = new Sponsor();
             SponsorWindow.WantstoBet(contestants, sponsor);
